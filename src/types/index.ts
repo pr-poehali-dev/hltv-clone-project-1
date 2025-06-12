@@ -3,6 +3,9 @@ export interface User {
   email: string;
   username: string;
   avatar?: string;
+  role: "user" | "admin" | "creator";
+  theme: "purple-black" | "purple-white";
+  subscriptions: string[]; // team IDs
   createdAt: Date;
 }
 
@@ -13,6 +16,7 @@ export interface Team {
   country: string;
   ranking: number;
   players: Player[];
+  subscriberCount: number;
 }
 
 export interface Player {
@@ -21,7 +25,7 @@ export interface Player {
   realName: string;
   country: string;
   age: number;
-  teamId: string;
+  teamId?: string;
   rating: number;
   avatar?: string;
 }
@@ -70,5 +74,16 @@ export interface AuthContextType {
     username: string,
   ) => Promise<void>;
   logout: () => void;
+  updateProfile: (updates: Partial<User>) => void;
+  subscribeToTeam: (teamId: string) => void;
+  unsubscribeFromTeam: (teamId: string) => void;
   loading: boolean;
+}
+
+export interface SearchResult {
+  type: "team" | "player" | "match" | "news";
+  id: string;
+  title: string;
+  subtitle?: string;
+  image?: string;
 }

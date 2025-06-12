@@ -26,10 +26,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Проверяем сохраненного пользователя в localStorage
-    const savedUser = localStorage.getItem("hltv_user");
+    const savedUser = localStorage.getItem("obsidian_user");
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      const userData = JSON.parse(savedUser);
+      setUser(userData);
+      // Apply theme
+      document.documentElement.className =
+        userData.theme === "purple-white" ? "light" : "dark";
     }
     setLoading(false);
   }, []);
@@ -37,20 +40,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      // Симуляция API запроса
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
+      // Check if this is creator email
+      const role = email === "epicleague@bk.ru" ? "creator" : "user";
+
       const newUser: User = {
-        id: "1",
+        id: Math.random().toString(36),
         email,
         username: email.split("@")[0],
+        role,
+        theme: "purple-black",
+        subscriptions: [],
         createdAt: new Date(),
       };
 
       setUser(newUser);
-      localStorage.setItem("hltv_user", JSON.stringify(newUser));
-    } catch (error) {
-      throw new Error("Ошибка входа");
+      localStorage.setItem("obsidian_user", JSON.stringify(newUser));
     } finally {
       setLoading(false);
     }
@@ -63,20 +69,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   ) => {
     setLoading(true);
     try {
-      // Симуляция API запроса
       await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const role = email === "epicleague@bk.ru" ? "creator" : "user";
 
       const newUser: User = {
         id: Math.random().toString(36),
         email,
         username,
+        role,
+        theme: "purple-black",
+        subscriptions: [],
         createdAt: new Date(),
       };
 
       setUser(newUser);
-      localStorage.setItem("hltv_user", JSON.stringify(newUser));
-    } catch (error) {
-      throw new Error("Ошибка регистрации");
+      localStorage.setItem("obsidian_user", JSON.stringify(newUser));
     } finally {
       setLoading(false);
     }
@@ -84,7 +92,39 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("hltv_user");
+    localStorage.removeItem("obsidian_user");
+    document.documentElement.className = "dark";
+  };
+
+  const updateProfile = (updates: Partial<User>) => {
+    if (!user) return;
+
+    const updatedUser = { ...user, ...updates };
+    setUser(updatedUser);
+    localStorage.setItem("obsidian_user", JSON.stringify(updatedUser));
+
+    // Apply theme change
+    if (updates.theme) {
+      document.documentElement.className =
+        updates.theme === "purple-white" ? "light" : "dark";
+    }
+  };
+
+  const subscribeToTeam = (teamId: string) => {
+    if (!user) return;
+
+    const subscriptions = [...user.subscriptions];
+    if (!subscriptions.includes(teamId)) {
+      subscriptions.push(teamId);
+      updateProfile({ subscriptions });
+    }
+  };
+
+  const unsubscribeFromTeam = (teamId: string) => {
+    if (!user) return;
+
+    const subscriptions = user.subscriptions.filter((id) => id !== teamId);
+    updateProfile({ subscriptions });
   };
 
   const value: AuthContextType = {
@@ -92,6 +132,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     login,
     register,
     logout,
+    updateProfile,
+    subscribeToTeam,
+    unsubscribeFromTeam,
     loading,
   };
 

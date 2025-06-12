@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import SearchComponent from "@/components/Search/SearchComponent";
 import Icon from "@/components/ui/icon";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -28,9 +28,9 @@ const Header = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 hltv-gradient rounded flex items-center justify-center">
-              <span className="text-white font-bold text-lg">H</span>
+              <span className="text-white font-bold text-lg">O</span>
             </div>
-            <span className="font-oswald text-xl font-bold">HLTV.ru</span>
+            <span className="font-oswald text-xl font-bold">Obsidian</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -63,11 +63,8 @@ const Header = () => {
 
           {/* Search & Auth */}
           <div className="flex items-center space-x-4">
-            <div className="hidden md:flex items-center space-x-2">
-              <Input placeholder="Поиск..." className="w-64" />
-              <Button size="sm" variant="outline">
-                <Icon name="Search" size={16} />
-              </Button>
+            <div className="hidden md:block">
+              <SearchComponent />
             </div>
 
             {user ? (
@@ -82,6 +79,16 @@ const Header = () => {
                   <DropdownMenuItem onClick={() => navigate("/profile")}>
                     Профиль
                   </DropdownMenuItem>
+                  {user.role === "admin" && (
+                    <DropdownMenuItem onClick={() => navigate("/admin")}>
+                      Админ панель
+                    </DropdownMenuItem>
+                  )}
+                  {user.role === "creator" && (
+                    <DropdownMenuItem onClick={() => navigate("/creator")}>
+                      Панель создателя
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem onClick={handleLogout}>
                     Выйти
                   </DropdownMenuItem>
@@ -146,11 +153,8 @@ const Header = () => {
                 Игроки
               </Link>
 
-              <div className="flex items-center space-x-2 pt-4">
-                <Input placeholder="Поиск..." className="flex-1" />
-                <Button size="sm" variant="outline">
-                  <Icon name="Search" size={16} />
-                </Button>
+              <div className="pt-4">
+                <SearchComponent />
               </div>
 
               {!user && (

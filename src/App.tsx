@@ -7,6 +7,14 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Matches from "./pages/Matches";
+import News from "./pages/News";
+import Rankings from "./pages/Rankings";
+import Teams from "./pages/Teams";
+import Players from "./pages/Players";
+import AdminPanel from "./pages/AdminPanel";
+import CreatorPanel from "./pages/CreatorPanel";
+import ProfileSettings from "./pages/ProfileSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,7 +30,14 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="/matches" element={<Matches />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/rankings" element={<Rankings />} />
+            <Route path="/teams" element={<Teams />} />
+            <Route path="/players" element={<Players />} />
+            <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/creator" element={<CreatorPanel />} />
+            <Route path="/profile" element={<ProfileSettings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
